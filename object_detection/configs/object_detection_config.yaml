@@ -1,0 +1,14 @@
+WORKSPACE:
+  HOME: /home/ftx/Documents/yangxl-2014-fe/myColab-Data/object_detection
+  # HOME: /home/ftx/Documents/yangxl-2014-fe/myColab/Data
+  CONFIG:
+    DIR: config
+    ENABLE_LOG: true
+    RELEASE: false
+  OUTPUT:
+    DIR: output
+  LOG:
+    DIR: log
+    FILE: object_detection.log
+  TEMP:
+    DATA_TEMP: temp
