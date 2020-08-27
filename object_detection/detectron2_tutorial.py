@@ -248,11 +248,19 @@ if __name__ == '__main__':
         base_dir = osp.basename(gcfg.get_dataset_img_dir)
         ColorPrint.print_info('  - base_dir: {}'.format(base_dir))
 
-        save_dir = osp.join(gcfg.get_ou_dir, base_dir)
-        if not osp.exists(save_dir):
-            os.mkdir(save_dir)
+        img_num_per_bag = 500
 
-        for idx in range(min(1200, len(png_files))):
+        for idx in range(min(1200000, len(png_files))):
+            idx_bag = int(idx / img_num_per_bag)
+
+            save_dir = osp.join(gcfg.get_ou_dir,
+                                '{}_{:05d}-{:05d}'.format(
+                                    base_dir,
+                                    idx_bag * img_num_per_bag,
+                                    (idx_bag + 1) * img_num_per_bag))
+            if not osp.exists(save_dir):
+                os.mkdir(save_dir)
+
             img_in = cv2.imread(png_files[idx])
             img_name = osp.basename(png_files[idx])
             ColorPrint.print_info('  - process {}'.format(img_name))
