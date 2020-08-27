@@ -1,6 +1,8 @@
 WORKSPACE:
   HOME: /home/ftx/Documents/yangxl-2014-fe/myColab-Data/object_detection
   # HOME: /home/ftx/Documents/yangxl-2014-fe/myColab/Data
+  DATASET:
+    IMG_DIR: /disk4t0/SLAM/FT-Dataset/rosbag-data/2020-06-24-17-21-01/left_compressed
   CONFIG:
     DIR: config
     ENABLE_LOG: true

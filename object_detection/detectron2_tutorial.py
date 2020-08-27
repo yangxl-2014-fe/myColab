@@ -42,6 +42,7 @@ from object_detection.configs import cfg as gcfg
 from object_detection.configs import ColorPrint
 from object_detection.configs import get_specific_files
 from object_detection.configs import get_specific_files_with_tag_in_name
+from object_detection.visualization import viz_image_grid
 
 
 def get_image():
@@ -195,6 +196,7 @@ def train_model():
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 128
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1  # only has one class (ballon)
 
+    cfg.OUTPUT_DIR = gcfg.get_ou_dir
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     trainer = DefaultTrainer(cfg)
     trainer.resume_or_load(resume=False)
@@ -214,6 +216,8 @@ if __name__ == '__main__':
     print('\n')
     subprocess.call(['gcc', '--version'])
 
+    time_beg = time.time()
+
     # Run a pre-trained detectron2 model
     enable_use_pre_trained = True
     if enable_use_pre_trained:
@@ -222,16 +226,42 @@ if __name__ == '__main__':
         cv2.imwrite(get_save_path(), img_ou)
 
     # Train on a custom dataset
-    enable_detect_balloon = True
+    enable_detect_balloon = False
     if enable_detect_balloon:
         get_dataset()
         detect_balloon()
 
     # fine-tune a COCO-pretrained R50-FPN Mask R-CNN model
     #   on the balloon dataset
-    enable_fine_tune = True
+    enable_fine_tune = False
     if enable_fine_tune:
         '''
         nvidia-smi --loop=2
         '''
         train_model()
+
+    enable_process_dataset = True
+    if enable_process_dataset:
+        png_files = get_specific_files(gcfg.get_dataset_img_dir, '.png', True)
+        ColorPrint.print_info('  - png_files: {}'.format(len(png_files)))
+
+        base_dir = osp.basename(gcfg.get_dataset_img_dir)
+        ColorPrint.print_info('  - base_dir: {}'.format(base_dir))
+
+        save_dir = osp.join(gcfg.get_ou_dir, base_dir)
+        if not osp.exists(save_dir):
+            os.mkdir(save_dir)
+
+        for idx in range(min(1200, len(png_files))):
+            img_in = cv2.imread(png_files[idx])
+            img_name = osp.basename(png_files[idx])
+            ColorPrint.print_info('  - process {}'.format(img_name))
+            img_ou = predict_image(img_in)
+            save_name = osp.join(save_dir, img_name)
+
+            # grid_viz = viz_image_grid.VizImageGrid(im)
+
+            cv2.imwrite(save_name, img_ou)
+
+    time_end = time.time()
+    ColorPrint.print_warn('elapsed {} seconds.'.format(time_end - time_beg))

@@ -143,6 +143,10 @@ class CommonAPI:
     @property
     def get_temp_dir(self):
         return osp.join(self.get_home_dir, self.cfg.WORKSPACE.TEMP.DATA_TEMP)
+
+    @property
+    def get_dataset_img_dir(self):
+        return self.cfg.WORKSPACE.DATASET.IMG_DIR
     # ======================================================================== #
     # </Get Dir >
     # ======================================================================== #
