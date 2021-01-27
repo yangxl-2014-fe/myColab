@@ -18,10 +18,10 @@ import numpy as np
 import cv2
 
 import torch
-import torchvision
+# import torchvision
 import subprocess
 
-import detectron2
+# import detectron2
 from detectron2.utils.logger import setup_logger
 
 # import some common libraries
@@ -41,10 +41,10 @@ from detectron2.structures import BoxMode
 from object_detection.configs import cfg as gcfg
 from object_detection.configs import ColorPrint
 from object_detection.configs import get_specific_files
-from object_detection.configs import get_specific_files_with_tag_in_name
-from object_detection.visualization import viz_image_grid
+# from object_detection.configs import get_specific_files_with_tag_in_name
+# from object_detection.visualization import viz_image_grid
 
-
+'''
 def get_image():
     img_url = 'http://images.cocodataset.org/val2017/000000439715.jpg'
     img_save = osp.join(gcfg.get_temp_dir, 'input.jpg')
@@ -52,6 +52,7 @@ def get_image():
         subprocess.call(['wget', img_url, '-q', '-O', img_save])
     im = cv2.imread(img_save)
     return im
+'''
 
 
 def get_save_path():
@@ -59,6 +60,7 @@ def get_save_path():
     return img_save
 
 
+'''
 def get_dataset():
     # download, decompress the data
     zip_url = ('https://github.com/matterport/Mask_RCNN/releases/download/'
@@ -71,6 +73,7 @@ def get_dataset():
         os.chdir(gcfg.get_temp_dir)
         subprocess.call(['unzip', zip_save])
         os.chdir(cwd_path)
+'''
 
 
 def predict_image(im):
@@ -104,6 +107,7 @@ def predict_image(im):
     return out.get_image()
 
 
+'''
 def get_balloon_dicts(img_dir):
     """
     Notes
@@ -201,7 +205,7 @@ def train_model():
     trainer = DefaultTrainer(cfg)
     trainer.resume_or_load(resume=False)
     trainer.train()
-
+'''
 
 ################################################################################
 # main
@@ -219,26 +223,30 @@ if __name__ == '__main__':
     time_beg = time.time()
 
     # Run a pre-trained detectron2 model
+    '''
     enable_use_pre_trained = True
     if enable_use_pre_trained:
         img_in = get_image()
         img_ou = predict_image(img_in)
         cv2.imwrite(get_save_path(), img_ou)
+    '''
 
     # Train on a custom dataset
+    '''
     enable_detect_balloon = False
     if enable_detect_balloon:
         get_dataset()
         detect_balloon()
+    '''
 
     # fine-tune a COCO-pretrained R50-FPN Mask R-CNN model
     #   on the balloon dataset
+    '''
     enable_fine_tune = False
     if enable_fine_tune:
-        '''
-        nvidia-smi --loop=2
-        '''
+        # nvidia-smi --loop=2
         train_model()
+    '''
 
     enable_process_dataset = True
     if enable_process_dataset:
