@@ -130,3 +130,5 @@ dmypy.json
 
 # pycharm setting
 .idea
+tmp
+__pycache__
