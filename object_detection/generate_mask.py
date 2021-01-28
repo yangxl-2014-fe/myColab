@@ -32,7 +32,7 @@ from detectron2 import model_zoo
 from detectron2.engine import DefaultPredictor
 # from detectron2.engine import DefaultTrainer
 from detectron2.config import get_cfg
-from detectron2.utils.visualizer import Visualizer, GenericMask
+from detectron2.utils.visualizer import Visualizer, GenericMask, ColorMode
 # from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.data import MetadataCatalog
 
@@ -75,7 +75,8 @@ def predict_image(im):
     v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]),
                    scale=1.2)
     '''
-    v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]),
+    v = Visualizer(np.zeros_like(im),
+                   MetadataCatalog.get(cfg.DATASETS.TRAIN[0]),
                    scale=1.0)
     if outputs["instances"].has("pred_masks"):
         masks = np.asarray(outputs["instances"].to("cpu").pred_masks)
