@@ -10,7 +10,7 @@ https://colab.research.google.com/drive/16jcaJoc6bCFAQ96jDe2HwtXj7BMD_-m5
 import sys
 import os
 import os.path as osp
-# import logging
+import logging
 # import json
 # import random
 import time
@@ -32,7 +32,7 @@ from detectron2 import model_zoo
 from detectron2.engine import DefaultPredictor
 # from detectron2.engine import DefaultTrainer
 from detectron2.config import get_cfg
-from detectron2.utils.visualizer import Visualizer
+from detectron2.utils.visualizer import Visualizer, GenericMask
 # from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.data import MetadataCatalog
 
@@ -44,13 +44,6 @@ from object_detection.configs import ColorPrint
 from object_detection.configs import get_specific_files
 # from object_detection.configs import get_specific_files_with_tag_in_name
 # from object_detection.visualization import viz_image_grid
-
-
-'''
-def get_save_path():
-    img_save = osp.join(gcfg.get_temp_dir, 'output.png')
-    return img_save
-'''
 
 
 def predict_image(im):
@@ -78,9 +71,18 @@ def predict_image(im):
     print(outputs["instances"].pred_boxes)
 
     # We can use `Visualizer` to draw the predictions on the image.
+    '''
     v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]),
                    scale=1.2)
-    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    '''
+    v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]),
+                   scale=1.0)
+    if outputs["instances"].has("pred_masks"):
+        masks = np.asarray(outputs["instances"].to("cpu").pred_masks)
+        masks = [GenericMask(x, v.output.height, v.output.width) for x in masks]
+        out = v.overlay_instances(masks=masks)
+    else:
+        out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
     return out.get_image()
 
 
@@ -102,6 +104,7 @@ if __name__ == '__main__':
     enable_process_dataset = True
     if enable_process_dataset:
         png_files = get_specific_files(gcfg.get_dataset_img_dir, '.png', True)
+        png_files = png_files[:3]
         ColorPrint.print_info('  - png_files: {}'.format(len(png_files)))
 
         base_dir = osp.basename(gcfg.get_dataset_img_dir)
@@ -112,11 +115,11 @@ if __name__ == '__main__':
         for idx in range(min(1200000, len(png_files))):
             idx_bag = int(idx / img_num_per_bag)
 
-            save_dir = osp.join(gcfg.get_ou_dir,
-                                '{}_{:05d}-{:05d}'.format(
-                                    base_dir,
-                                    idx_bag * img_num_per_bag,
-                                    (idx_bag + 1) * img_num_per_bag))
+            save_dir = osp.join(
+                gcfg.get_ou_dir,
+                '{}_{:05d}-{:05d}'.format(
+                    base_dir, idx_bag * img_num_per_bag,
+                    (idx_bag + 1) * img_num_per_bag))
             if not osp.exists(save_dir):
                 os.mkdir(save_dir)
 
@@ -125,7 +128,7 @@ if __name__ == '__main__':
             ColorPrint.print_info('  - process {}'.format(img_name))
             img_ou = predict_image(img_in)
             save_name = osp.join(save_dir, img_name)
-            img_ou = cv2.resize(img_ou, (img_in.shape[1], img_in.shape[0]))
+            # img_ou = cv2.resize(img_ou, (img_in.shape[1], img_in.shape[0]))
 
             # grid_viz = viz_image_grid.VizImageGrid(im)
 
