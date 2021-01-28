@@ -46,6 +46,21 @@ from object_detection.configs import get_specific_files
 # from object_detection.visualization import viz_image_grid
 
 
+def value_statis(data, desc):
+    labels, areas = np.unique(data, return_counts=True)
+
+    sorted_idxs = np.argsort(-areas).tolist()
+    labels = labels[sorted_idxs]
+    areas = areas[sorted_idxs]
+    print('== {}: {} {} =='.format(desc, data.shape, data.dtype))
+    if len(labels) > 20:
+        print('  - label:  {} {}'.format(labels.shape, labels.dtype))
+        print('  - count:  {} {}'.format(areas.shape, areas.dtype))
+    else:
+        print('  - label:  {} {} {}'.format(labels.shape, labels.dtype, labels))
+        print('  - count:  {} {} {}'.format(areas.shape, areas.dtype, areas))
+
+
 def predict_image(im):
     cfg = get_cfg()
 
@@ -78,27 +93,30 @@ def predict_image(im):
     v = Visualizer(np.zeros_like(im),
                    MetadataCatalog.get(cfg.DATASETS.TRAIN[0]),
                    scale=1.0)
+    im_mask = np.zeros_like(im, np.uint8)
+
     if outputs["instances"].has("pred_masks"):
         masks = np.asarray(outputs["instances"].to("cpu").pred_masks)
+        value_statis(masks, 'massk1')
+        print('masks1: {}'.format(type(masks)))
+
+        for idx_i in range(masks.shape[0]):
+            im_mask[masks[idx_i, :, :]] = idx_i * 5 + 50
+
         masks = [GenericMask(x, v.output.height, v.output.width) for x in masks]
+
+        print('masks2: {}'.format(type(masks)))
         num_instance = len(v._convert_masks(masks))
         print('  -> num_instances: {}'.format(num_instance))
         out = v.overlay_instances(masks=masks)
     else:
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
 
-    labels, areas = np.unique(out.get_image(), return_counts=True)
-    sorted_idxs = np.argsort(-areas).tolist()
-    labels = labels[sorted_idxs]
-    areas = areas[sorted_idxs]
-    print('sort_labels: {} {} {}'.format(
-        type(labels), labels.shape, labels.dtype))
-    print('sort_areas:  {} {} {}'.format(
-        type(areas), areas.shape, areas.dtype))
-    data = out.get_image()
-    print('data: {} {} {}'.format(type(data), data.shape, data.dtype))
+    value_statis(out.get_image(), 'out.get_image()')
+    value_statis(im_mask, 'im_mask')
 
-    return out.get_image()
+    # return out.get_image()
+    return im_mask
 
 
 ################################################################################
