@@ -119,6 +119,23 @@ def predict_image(im):
     return im_mask
 
 
+def predict_image_opt(im):
+    cfg = get_cfg()
+    cfg.merge_from_file(model_zoo.get_config_file(
+        "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
+    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
+        "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
+    predictor = DefaultPredictor(cfg)
+    outputs = predictor(im)
+    im_mask = np.zeros_like(im, np.uint8)
+    if outputs["instances"].has("pred_masks"):
+        masks = np.asarray(outputs["instances"].to("cpu").pred_masks)
+        for idx_i in range(masks.shape[0]):
+            im_mask[masks[idx_i, :, :]] = idx_i * 5 + 50
+    return im_mask
+
+
 ################################################################################
 # main
 ################################################################################
@@ -159,7 +176,7 @@ if __name__ == '__main__':
             img_in = cv2.imread(png_files[idx])
             img_name = osp.basename(png_files[idx])
             ColorPrint.print_info('  - process {}'.format(img_name))
-            img_ou = predict_image(img_in)
+            img_ou = predict_image_opt(img_in)
             save_name = osp.join(save_dir, img_name)
             # img_ou = cv2.resize(img_ou, (img_in.shape[1], img_in.shape[0]))
 
