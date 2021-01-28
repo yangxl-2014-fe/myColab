@@ -81,9 +81,23 @@ def predict_image(im):
     if outputs["instances"].has("pred_masks"):
         masks = np.asarray(outputs["instances"].to("cpu").pred_masks)
         masks = [GenericMask(x, v.output.height, v.output.width) for x in masks]
+        num_instance = len(v._convert_masks(masks))
+        print('  -> num_instances: {}'.format(num_instance))
         out = v.overlay_instances(masks=masks)
     else:
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+
+    labels, areas = np.unique(out.get_image(), return_counts=True)
+    sorted_idxs = np.argsort(-areas).tolist()
+    labels = labels[sorted_idxs]
+    areas = areas[sorted_idxs]
+    print('sort_labels: {} {} {}'.format(
+        type(labels), labels.shape, labels.dtype))
+    print('sort_areas:  {} {} {}'.format(
+        type(areas), areas.shape, areas.dtype))
+    data = out.get_image()
+    print('data: {} {} {}'.format(type(data), data.shape, data.dtype))
+
     return out.get_image()
 
 
