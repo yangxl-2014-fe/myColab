@@ -3,6 +3,7 @@ WORKSPACE:
   # HOME: /home/ftx/Documents/yangxl-2014-fe/myColab/Data
   DATASET:
     IMG_DIR: /disk4t0/0-MonoDepth-Database/KITTI/2011_09_26/2011_09_26_drive_0001_sync/image_02/data
+    KITTI_SEQ: /disk4t0/0-MonoDepth-Database/KITTI
   CONFIG:
     DIR: config
     ENABLE_LOG: true

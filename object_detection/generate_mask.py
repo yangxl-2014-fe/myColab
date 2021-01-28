@@ -42,6 +42,7 @@ from detectron2.data import MetadataCatalog
 from object_detection.configs import cfg as gcfg
 from object_detection.configs import ColorPrint
 from object_detection.configs import get_specific_files
+from object_detection.configs import get_specific_files_no_tag
 # from object_detection.configs import get_specific_files_with_tag_in_name
 # from object_detection.visualization import viz_image_grid
 
@@ -101,7 +102,7 @@ def predict_image(im):
         print('masks1: {}'.format(type(masks)))
 
         for idx_i in range(masks.shape[0]):
-            im_mask[masks[idx_i, :, :]] = idx_i * 5 + 50
+            im_mask[masks[idx_i, :, :]] = idx_i * 2 + 10
 
         masks = [GenericMask(x, v.output.height, v.output.width) for x in masks]
 
@@ -132,8 +133,91 @@ def predict_image_opt(im):
     if outputs["instances"].has("pred_masks"):
         masks = np.asarray(outputs["instances"].to("cpu").pred_masks)
         for idx_i in range(masks.shape[0]):
-            im_mask[masks[idx_i, :, :]] = idx_i * 5 + 50
+            im_mask[masks[idx_i, :, :]] = idx_i * 2 + 10
     return im_mask
+
+
+def process_mynt_dataset():
+    png_files = get_specific_files_no_tag(
+        gcfg.get_dataset_img_dir, '.png', '-fseg', True)
+    png_files = png_files[:5]
+    ColorPrint.print_info('  - png_files: {}'.format(len(png_files)))
+
+    base_dir = osp.basename(gcfg.get_dataset_img_dir)
+    ColorPrint.print_info('  - base_dir: {}'.format(base_dir))
+
+    img_num_per_bag = 500
+
+    for idx in range(min(1200000, len(png_files))):
+        idx_bag = int(idx / img_num_per_bag)
+
+        save_dir = osp.join(
+            gcfg.get_ou_dir,
+            '{}_{:05d}-{:05d}'.format(
+                base_dir, idx_bag * img_num_per_bag,
+                (idx_bag + 1) * img_num_per_bag))
+        if not osp.exists(save_dir):
+            os.mkdir(save_dir)
+
+        img_in = cv2.imread(png_files[idx])
+        img_name = osp.basename(png_files[idx])
+        ColorPrint.print_info('  - process {}'.format(img_name))
+        img_ou = predict_image_opt(img_in)  # predict
+        str_base, str_ext = osp.splitext(img_name)
+        save_name = osp.join(save_dir, str_base + '-fseg' + str_ext)
+        # img_ou = cv2.resize(img_ou, (img_in.shape[1], img_in.shape[0]))
+
+        # grid_viz = viz_image_grid.VizImageGrid(im)
+
+        cv2.imwrite(save_name, img_ou)
+
+
+def process_kitti_dataset():
+    # check kitti dir
+    kitti_home = gcfg.get_dataset_kitti_seq
+    if not osp.exists(kitti_home):
+        raise ValueError
+
+    drive_collections = list()
+    for item_date in os.listdir(kitti_home):
+        if not osp.isdir(osp.join(kitti_home, item_date)):
+            continue
+        subdir_date = osp.join(kitti_home, item_date)
+        for item_drive in os.listdir(subdir_date):
+            if not osp.isdir(osp.join(subdir_date, item_drive)):
+                continue
+            drive_collections.append(osp.join(subdir_date, item_drive))
+
+    # check drive dir
+    if len(drive_collections) == 0:
+        raise ValueError
+
+    drive_collections.sort()
+    img_col = list()
+    for item_dir in drive_collections:
+        png_cam2 = get_specific_files_no_tag(
+            osp.join(item_dir, 'image_02/data'), '.png', '-fseg', True)
+        png_cam3 = get_specific_files_no_tag(
+            osp.join(item_dir, 'image_03/data'), '.png', '-fseg', True)
+
+        if len(png_cam2) != len(png_cam3):
+            raise ValueError
+        img_col.append(png_cam2)
+        img_col.append(png_cam3)
+
+    # generate mask with detectron2
+    for seq in img_col:
+        data_dir, _ = osp.split(seq[0])
+        ColorPrint.print_info('- process_dir: {}'.format(data_dir))
+        ColorPrint.print_info('- png_files:   {}'.format(len(seq)))
+        for item_png in seq:
+            img_in = cv2.imread(item_png)
+            str_dirname, str_basename = osp.split(item_png)
+            str_base, str_ext = osp.splitext(str_basename)
+            save_name = osp.join(str_dirname, str_base + '-fseg' + str_ext)
+            ColorPrint.print_info('  - process {}'.format(str_basename))
+            img_ou = predict_image_opt(img_in)  # predict
+            cv2.imwrite(save_name, img_ou)
 
 
 ################################################################################
@@ -150,39 +234,7 @@ if __name__ == '__main__':
     subprocess.call(['gcc', '--version'])
 
     time_beg = time.time()
-
-    enable_process_dataset = True
-    if enable_process_dataset:
-        png_files = get_specific_files(gcfg.get_dataset_img_dir, '.png', True)
-        png_files = png_files[:3]
-        ColorPrint.print_info('  - png_files: {}'.format(len(png_files)))
-
-        base_dir = osp.basename(gcfg.get_dataset_img_dir)
-        ColorPrint.print_info('  - base_dir: {}'.format(base_dir))
-
-        img_num_per_bag = 500
-
-        for idx in range(min(1200000, len(png_files))):
-            idx_bag = int(idx / img_num_per_bag)
-
-            save_dir = osp.join(
-                gcfg.get_ou_dir,
-                '{}_{:05d}-{:05d}'.format(
-                    base_dir, idx_bag * img_num_per_bag,
-                    (idx_bag + 1) * img_num_per_bag))
-            if not osp.exists(save_dir):
-                os.mkdir(save_dir)
-
-            img_in = cv2.imread(png_files[idx])
-            img_name = osp.basename(png_files[idx])
-            ColorPrint.print_info('  - process {}'.format(img_name))
-            img_ou = predict_image_opt(img_in)
-            save_name = osp.join(save_dir, img_name)
-            # img_ou = cv2.resize(img_ou, (img_in.shape[1], img_in.shape[0]))
-
-            # grid_viz = viz_image_grid.VizImageGrid(im)
-
-            cv2.imwrite(save_name, img_ou)
-
+    # process_mynt_dataset()
+    process_kitti_dataset()
     time_end = time.time()
     ColorPrint.print_warn('elapsed {} seconds.'.format(time_end - time_beg))

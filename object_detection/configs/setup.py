@@ -147,6 +147,10 @@ class CommonAPI:
     @property
     def get_dataset_img_dir(self):
         return self.cfg.WORKSPACE.DATASET.IMG_DIR
+
+    @property
+    def get_dataset_kitti_seq(self):
+        return self.cfg.WORKSPACE.DATASET.KITTI_SEQ
     # ======================================================================== #
     # </Get Dir >
     # ======================================================================== #
@@ -252,6 +256,34 @@ def get_specific_files(name_dir, name_ext, with_dir=False):
     for item_file in os.listdir(name_dir):
         str_base, str_ext = osp.splitext(item_file)
         if str_ext.lower() == name_ext.lower():
+            if with_dir:
+                specific_files.append(osp.join(name_dir, item_file))
+            else:
+                specific_files.append(item_file)
+    specific_files.sort()
+    return specific_files
+
+
+def get_specific_files_no_tag(name_dir, name_ext, tag_to_exclued,
+                              with_dir=False):
+    """
+    Get files with specific extension and no tag in end of basename.
+    Parameters
+    ----------
+    name_dir : str
+    name_ext : str
+    tag_to_exclued : str
+    with_dir : bool
+
+    Returns
+    -------
+    list of str
+    """
+    specific_files = list()
+    for item_file in os.listdir(name_dir):
+        str_base, str_ext = osp.splitext(item_file)
+        if str_ext.lower() == name_ext.lower() \
+                and not str_base.endswith(tag_to_exclued):
             if with_dir:
                 specific_files.append(osp.join(name_dir, item_file))
             else:
