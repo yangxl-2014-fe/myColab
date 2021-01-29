@@ -206,10 +206,12 @@ def process_kitti_dataset():
         img_col.append(png_cam3)
 
     # generate mask with detectron2
+    img_num_total = 0
     for seq in img_col:
         data_dir, _ = osp.split(seq[0])
         ColorPrint.print_info('- process_dir: {}'.format(data_dir))
         ColorPrint.print_info('- png_files:   {}'.format(len(seq)))
+        img_num_total += len(seq)
         for item_png in seq:
             img_in = cv2.imread(item_png)
             str_dirname, str_basename = osp.split(item_png)
@@ -218,6 +220,7 @@ def process_kitti_dataset():
             ColorPrint.print_info('  - process {}'.format(str_basename))
             img_ou = predict_image_opt(img_in)  # predict
             cv2.imwrite(save_name, img_ou)
+    ColorPrint.print_warn('processed {} images in total.'.format(img_num_total))
 
 
 ################################################################################
