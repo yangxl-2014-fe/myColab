@@ -209,8 +209,8 @@ def get_model_list():
       https://github.com/facebookresearch/detectron2/issues/773#issuecomment-580603027
     /home/ftx/Documents/yangxl-2014-fe/my_forked/detectron2/detectron2/model_zoo/model_zoo.py
     """
-    yaml_dict = {
-        # COCO Detection with Faster R-CNN
+    yaml_dict = {  # 52 models
+        # COCO Detection with Faster R-CNN (10)
         "COCO-Detection/faster_rcnn_R_50_C4_1x.yaml": "137257644/model_final_721ade.pkl",
         "COCO-Detection/faster_rcnn_R_50_DC5_1x.yaml": "137847829/model_final_51d356.pkl",
         "COCO-Detection/faster_rcnn_R_50_FPN_1x.yaml": "137257794/model_final_b275ba.pkl",
@@ -221,15 +221,15 @@ def get_model_list():
         "COCO-Detection/faster_rcnn_R_101_DC5_3x.yaml": "138204841/model_final_3e0943.pkl",
         "COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml": "137851257/model_final_f6e8b1.pkl",
         "COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml": "139173657/model_final_68b088.pkl",
-        # COCO Detection with RetinaNet
+        # COCO Detection with RetinaNet (3)
         "COCO-Detection/retinanet_R_50_FPN_1x.yaml": "190397773/model_final_bfca0b.pkl",
         "COCO-Detection/retinanet_R_50_FPN_3x.yaml": "190397829/model_final_5bd44e.pkl",
         "COCO-Detection/retinanet_R_101_FPN_3x.yaml": "190397697/model_final_971ab9.pkl",
-        # COCO Detection with RPN and Fast R-CNN
+        # COCO Detection with RPN and Fast R-CNN (3)
         "COCO-Detection/rpn_R_50_C4_1x.yaml": "137258005/model_final_450694.pkl",
         "COCO-Detection/rpn_R_50_FPN_1x.yaml": "137258492/model_final_02ce48.pkl",
         "COCO-Detection/fast_rcnn_R_50_FPN_1x.yaml": "137635226/model_final_e5f7ce.pkl",
-        # COCO Instance Segmentation Baselines with Mask R-CNN
+        # COCO Instance Segmentation Baselines with Mask R-CNN (10)
         "COCO-InstanceSegmentation/mask_rcnn_R_50_C4_1x.yaml": "137259246/model_final_9243eb.pkl",
         "COCO-InstanceSegmentation/mask_rcnn_R_50_DC5_1x.yaml": "137260150/model_final_4f86c3.pkl",
         "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml": "137260431/model_final_a54504.pkl",
@@ -240,23 +240,23 @@ def get_model_list():
         "COCO-InstanceSegmentation/mask_rcnn_R_101_DC5_3x.yaml": "138363294/model_final_0464b7.pkl",
         "COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x.yaml": "138205316/model_final_a3ec72.pkl",
         "COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml": "139653917/model_final_2d9806.pkl",  # noqa
-        # COCO Person Keypoint Detection Baselines with Keypoint R-CNN
+        # COCO Person Keypoint Detection Baselines with Keypoint R-CNN (4)
         "COCO-Keypoints/keypoint_rcnn_R_50_FPN_1x.yaml": "137261548/model_final_04e291.pkl",
         "COCO-Keypoints/keypoint_rcnn_R_50_FPN_3x.yaml": "137849621/model_final_a6e10b.pkl",
         "COCO-Keypoints/keypoint_rcnn_R_101_FPN_3x.yaml": "138363331/model_final_997cc7.pkl",
         "COCO-Keypoints/keypoint_rcnn_X_101_32x8d_FPN_3x.yaml": "139686956/model_final_5ad38f.pkl",
-        # COCO Panoptic Segmentation Baselines with Panoptic FPN
+        # COCO Panoptic Segmentation Baselines with Panoptic FPN (3)
         "COCO-PanopticSegmentation/panoptic_fpn_R_50_1x.yaml": "139514544/model_final_dbfeb4.pkl",
         "COCO-PanopticSegmentation/panoptic_fpn_R_50_3x.yaml": "139514569/model_final_c10459.pkl",
         "COCO-PanopticSegmentation/panoptic_fpn_R_101_3x.yaml": "139514519/model_final_cafdb1.pkl",
-        # LVIS Instance Segmentation Baselines with Mask R-CNN
+        # LVIS Instance Segmentation Baselines with Mask R-CNN (3)
         "LVISv0.5-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml": "144219072/model_final_571f7c.pkl",  # noqa
         "LVISv0.5-InstanceSegmentation/mask_rcnn_R_101_FPN_1x.yaml": "144219035/model_final_824ab5.pkl",  # noqa
         "LVISv0.5-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_1x.yaml": "144219108/model_final_5e3439.pkl",  # noqa
-        # Cityscapes & Pascal VOC Baselines
+        # Cityscapes & Pascal VOC Baselines (2)
         "Cityscapes/mask_rcnn_R_50_FPN.yaml": "142423278/model_final_af9cf5.pkl",
         "PascalVOC-Detection/faster_rcnn_R_50_C4.yaml": "142202221/model_final_b1acc2.pkl",
-        # Other Settings
+        # Other Settings (11)
         "Misc/mask_rcnn_R_50_FPN_1x_dconv_c3-c5.yaml": "138602867/model_final_65c703.pkl",
         "Misc/mask_rcnn_R_50_FPN_3x_dconv_c3-c5.yaml": "144998336/model_final_821d0b.pkl",
         "Misc/cascade_mask_rcnn_R_50_FPN_1x.yaml": "138602847/model_final_e9d89b.pkl",
@@ -268,7 +268,7 @@ def get_model_list():
         "Misc/scratch_mask_rcnn_R_50_FPN_9x_syncbn.yaml": "184226666/model_final_5ce33e.pkl",
         "Misc/panoptic_fpn_R_101_dconv_cascade_gn_3x.yaml": "139797668/model_final_be35db.pkl",
         "Misc/cascade_mask_rcnn_X_152_32x8d_FPN_IN5k_gn_dconv.yaml": "18131413/model_0039999_e76410.pkl",  # noqa
-        # D1 Comparisons
+        # D1 Comparisons (3)
         "Detectron1-Comparisons/faster_rcnn_R_50_FPN_noaug_1x.yaml": "137781054/model_final_7ab50c.pkl",  # noqa
         "Detectron1-Comparisons/mask_rcnn_R_50_FPN_noaug_1x.yaml": "137781281/model_final_62ca52.pkl",  # noqa
         "Detectron1-Comparisons/keypoint_rcnn_R_50_FPN_1x.yaml": "137781195/model_final_cce136.pkl",
@@ -276,11 +276,26 @@ def get_model_list():
     return sorted(yaml_dict.keys())
 
 
-def download_model(model, im):
+def download_model(model):
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file(model))
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(model)
-    predictor = DefaultPredictor(cfg)
+    print(f'loading {cfg.MODEL.WEIGHTS}')
+    local_save_dir = '/home/ftx/.torch/fvcore_cache/detectron2'
+    remote_url = 'https://dl.fbaipublicfiles.com/detectron2/'
+    src_file = cfg.MODEL.WEIGHTS
+    name = model.replace(".yaml", "")
+    sub_dir = osp.join(remote_url, name)
+    str_suffix = src_file[len(sub_dir) + 1:]
+    dst_file = osp.join(local_save_dir, name + '/' + str_suffix)
+
+    dst_dir = osp.split(dst_file)[0]
+    if not osp.exists(dst_dir):
+        os.makedirs(dst_dir)
+    if not osp.exists(dst_file):
+        # subprocess.call(['wget', src_file, '-O', dst_file])
+        print(f'wget {src_file} -O {dst_file}')
+    # predictor = DefaultPredictor(cfg)
     # outputs = predictor(im)
 
 
@@ -291,9 +306,7 @@ def download_all_pre_trained_models():
     im = get_image()
     for model in models:
         print(f'downloading {model}')
-        download_model(model, im)
-
-
+        download_model(model)
 
 
 ################################################################################
