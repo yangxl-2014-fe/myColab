@@ -280,8 +280,8 @@ def download_model(model):
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file(model))
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(model)
-    print(f'loading {cfg.MODEL.WEIGHTS}')
-    local_save_dir = '/home/ftx/.torch/fvcore_cache/detectron2'
+    # print(f'loading {cfg.MODEL.WEIGHTS}')
+    local_save_dir = '/disk4t0/detectron2_models/fvcore_cache/detectron2'
     remote_url = 'https://dl.fbaipublicfiles.com/detectron2/'
     src_file = cfg.MODEL.WEIGHTS
     name = model.replace(".yaml", "")
@@ -292,6 +292,7 @@ def download_model(model):
     dst_dir = osp.split(dst_file)[0]
     if not osp.exists(dst_dir):
         os.makedirs(dst_dir)
+        # print(f'mkdir {dst_dir}')
     if not osp.exists(dst_file):
         # subprocess.call(['wget', src_file, '-O', dst_file])
         print(f'wget {src_file} -O {dst_file}')
@@ -305,7 +306,7 @@ def download_all_pre_trained_models():
 
     im = get_image()
     for model in models:
-        print(f'downloading {model}')
+        # print(f'downloading {model}')
         download_model(model)
 
 
